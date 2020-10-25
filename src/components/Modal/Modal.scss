@@ -4,17 +4,33 @@
   right: 0;
   bottom: 0;
   left: 0;
-  background: rgba(0, 0, 0, 0.5);
+
+  padding-top: 5rem;
   display: flex;
   justify-content: center;
-  padding-top: 5rem;
+
+  background: rgba(0, 0, 0, 0.5);
 
   &__body {
+    position: relative;
+
     padding: 2rem;
+    height: 600px;
     width: 400px;
     border-radius: 5px;
+
     background: #fff;
-    height: 200px;
+  }
+
+  &__h1 {
+    margin: 0;
+    margin-bottom: 15px;
+  }
+
+  &__btn-close {
+    position: absolute;
+    top: 20px;
+    right: 20px;
   }
 }
 
