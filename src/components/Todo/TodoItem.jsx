@@ -2,8 +2,8 @@ import React from 'react';
 import Context from '../../context';
 
 export default ({ todo, index, onChange }) => {
-  const { removeTodo } = React.useContext(Context)
-  const classes = []
+  const { removeTodo } = React.useContext(Context);
+  const classes = [];
 
   if (todo.completed) {
     classes.push('events__input--done');
@@ -22,7 +22,7 @@ export default ({ todo, index, onChange }) => {
         {todo.title}
       </span>
 
-      <button className='events__item-btn-close' onClick={removeTodo.bind(null, todo.id)}>
+      <button className='events__item-btn-remove' onClick={removeTodo.bind(null, todo.id)}>
         &times;
       </button>
     </li>

@@ -11,7 +11,6 @@ export default props => {
             key={todo.id}
             index={index}
             onChange={props.onToggle}
-            props={props}
           />
         )
       })}

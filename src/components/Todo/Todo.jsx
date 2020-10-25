@@ -5,7 +5,7 @@ import AddTodo from './AddTodo';
 
 import './Todo.scss';
 
-export default props => {
+export default () => {
   const [todos, setTodos] = React.useState([{
     title: 'fuck',
     id: Date.now(),
