@@ -1,0 +1,35 @@
+.events {
+  &__list {
+    margin: 0;
+    padding: 0;
+
+    list-style: none;
+  }
+
+  &__item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: .5rem;
+    padding: .5rem 1rem;
+
+    border: 1px solid #ccc;
+    border-radius: 4px;
+
+    &-btn-close {
+      color: #fff;
+
+      background: #4fc3f7;
+      border: none;
+      border-radius: 3px;
+    }
+  }
+
+  &__input {
+    margin-right: 1rem;
+
+    &--done { text-decoration: line-through; }
+  }
+
+  &__add-event { margin-bottom: 1rem; }
+}

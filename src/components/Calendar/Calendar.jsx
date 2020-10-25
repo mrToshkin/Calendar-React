@@ -32,6 +32,8 @@ class Calendar extends React.Component {
   getEvent = (key) => {
     console.log(this.state.events.get(key));
     console.log(this.state.events);
+
+    return this.state.events.get(key);
   }
 
   openModalHandler = () => this.setState({ modalIsOpen: true })
@@ -45,7 +47,11 @@ class Calendar extends React.Component {
         <button onClick={() => this.setEvent( 'textsdsdas')}>set</button>
         <button onClick={() => this.getEvent( "that key")}>get</button>
         {modalIsOpen &&
-          <Modal closeModal={this.closeModalHandler} />
+          <Modal 
+            closeModal={this.closeModalHandler} 
+            setEvent={this.setEvent}
+            getEvent={this.getEvent}
+          />
         }
         <Header />
         <div className="calendar__grid">
