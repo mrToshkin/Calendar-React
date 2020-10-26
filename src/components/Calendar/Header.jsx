@@ -5,5 +5,5 @@ export default props => {
     <div className="calendar__header">
       <p>buttons</p>
     </div>
-  )
+  );
 }

@@ -8,7 +8,6 @@ export default props => {
     <div className='modal'>
       <div className='modal__body'>
         <h1>Events:</h1>
-        {/* <Todo /> */}
         <Events />
         <div className='modal__btn-close'>
           <button onClick={props.closeModal}>
@@ -17,5 +16,5 @@ export default props => {
         </div>
       </div>
     </div>
-  )
+  );
 }

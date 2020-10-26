@@ -9,5 +9,5 @@ export default () => {
       <input {...input.bind} />
       <button type='submit'>Add todo</button>
     </form>
-  )
+  );
 }
