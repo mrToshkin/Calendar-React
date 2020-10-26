@@ -1,16 +1,23 @@
 import React from 'react';
-import EventsItem from './EventsItem';
 import Context from '../../context';
+
+import './Events.scss';
 
 export default () => {
   const { on, id, events } = React.useContext(Context);
+
+  let hasEvents = () => {
+    return ( Array.isArray(events.get(id)) ? 
+      events.get(id).some(even => even) : false
+    )
+  }
 
   return (
     <div>
       <form className="events__add-event" onSubmit={on.form.submit}>
         <label>
           Title:
-          <input type="text" name="title" id="title" onChange={on.form.title}/>
+          <input type="text" name="title" id="title" onChange={on.form.title} required/>
         </label>
         <label>
           Members:
@@ -30,7 +37,7 @@ export default () => {
         <button onClick={on.event.add.bind(null, id, events)}>set</button>
         <button onClick={on.event.remove.bind(null, id)}>remove</button>
         <button onClick={on.event.get.bind(null, id, 2)}>get</button>
-        {events.has(id) ? (
+        {hasEvents() ? ( 
           events.get(id).map((event, index) => {
             return (
               <li className='events__item' key={index + '.' + id}>
@@ -47,7 +54,7 @@ export default () => {
               </li>
             );
           })
-        ) : <p>No events!</p>}  
+        ) : <p>No events.</p>}  
       </ul>
     </div>
   );

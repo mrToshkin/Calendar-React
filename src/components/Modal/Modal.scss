@@ -4,19 +4,20 @@
   right: 0;
   bottom: 0;
   left: 0;
+  z-index: 0;
 
-  padding-top: 5rem;
-  display: flex;
-  justify-content: center;
-
-  background: rgba(0, 0, 0, 0.5);
+  display: grid;
+  grid-template-columns: auto 400px;
+  
+  &__overlay { background: rgba(0, 0, 0, 0.5); }
 
   &__body {
     position: relative;
+    z-index: 1;
 
     padding: 2rem;
-    height: 600px;
-    width: 400px;
+    padding-top: 0;
+    height: 100vh;
     border-radius: 5px;
 
     background: #fff;

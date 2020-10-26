@@ -5,7 +5,7 @@ import Day from './Day';
 import { getDays } from './getDays';
 import Context from '../../context';
 
-import './calendar.scss';
+import './Calendar.scss';
 
 class Calendar extends React.Component {
   /* static defaultProps = {
@@ -44,10 +44,6 @@ class Calendar extends React.Component {
            
         events.splice(eventIndex, 1);
         this.setState(this.state.events.set(id, events));
-        /* if (events.length === 1) {
-          this.setState(this.state.events.delete(id));
-        } else {
-        } */
       },
       /* edit:(id, eventIndex) => {
         let events = this.state.events.get(id);
@@ -80,8 +76,11 @@ class Calendar extends React.Component {
         };
   
         console.log(e);
+
+        if (this.state.title.length !== 0) {
+          this.on.event.add(this.state.id, event);
+        }
   
-        this.on.event.add(this.state.id, event);
         e.preventDefault();
       }
     },
