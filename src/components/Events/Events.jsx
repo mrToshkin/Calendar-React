@@ -2,21 +2,14 @@ import React from 'react';
 import Context from '../../context';
 
 export default () => {
-  const { on, id, events } = React.useContext(Context);
-
-  let hasEvents = () => {
-    return ( Array.isArray(events.get(id)) ? 
-      events.get(id).some(even => even) : false
-    )
-  }
+  const { on, id, events, hasEvents } = React.useContext(Context);
 
   return (
     <div>
+      <button onClick={on.mock.add.bind(null, id, { time: '15:35', title: 'Mock', members: 'Mock', text: 'Mock' })}>Mock</button>
+      <button onClick={on.mock.get.bind(null, id, 2)}>Get</button>
       <ul className='events__list'>
-        <button onClick={on.event.add.bind(null, id, { time: 'Mock', title: 'Mock', members: 'Mock', text: 'Mock'})}>set</button>
-        <button onClick={on.event.remove.bind(null, id)}>remove</button>
-        <button onClick={on.event.get.bind(null, id, 2)}>get</button>
-        {hasEvents() ? ( 
+        {hasEvents(id) ? ( 
           events.get(id).map((event, index) => {
             return (
               <li className='events__item' key={index + '.' + id}>
@@ -32,7 +25,7 @@ export default () => {
               </li>
             );
           })
-        ) : <p>No events.</p>}  
+        ) : <p>Нет событий.</p>}  
       </ul>
     </div>
   );

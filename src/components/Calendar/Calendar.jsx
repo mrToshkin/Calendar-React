@@ -1,57 +1,29 @@
 import React from 'react';
+import Context from '../../context';
+import moment from 'moment';
+import 'moment/locale/ru';
+
 import CalendarHeader from './CalendarHeader';
+import CalendarFooter from './CalendarFooter';
 import CalendarDay from './CalendarDay';
 import ModalDay from '../Modal/ModalDay';
-import ModalEvent from '../Modal/ModalEvent';
-//import { getDays } from './getDays';
-import Context from '../../context';
+import { getDays } from './getDays';
 
-import './Calendar.scss';
-import '../Modal/Modal.scss';
-import '../Events/Events.scss';
-import '../Form/Form.scss';
+import './styles.scss';
 
-//let days = getDays();
-
-//console.log(days);
+const MAX_MONTH = 11;
+const MIN_MONTH = 0;
+const DAY_NAMES = ['пн', 'вт', 'ср', 'чт', 'пт', 'сб', 'вс'];
+const initDay = moment().date();
+const initMonth = moment().month();
+const initYear = moment().year();
 
 class Calendar extends React.Component {
   state = {
-    days: [{ day: 28, month: 8, year: 2020, id: "28.8.2020" },
-           { day: 29, month: 8, year: 2020, id: "29.8.2020" },
-           { day: 30, month: 8, year: 2020, id: "30.8.2020" },
-           { day: 1, month: 9, year: 2020, id: "1.9.2020" },
-           { day: 2, month: 9, year: 2020, id: "2.9.2020" },
-           { day: 3, month: 9, year: 2020, id: "3.9.2020" },
-           { day: 4, month: 9, year: 2020, id: "4.9.2020" },
-           { day: 5, month: 9, year: 2020, id: "5.9.2020" },
-           { day: 6, month: 9, year: 2020, id: "6.9.2020" },
-           { day: 7, month: 9, year: 2020, id: "7.9.2020" },
-           { day: 8, month: 9, year: 2020, id: "8.9.2020" },
-           { day: 9, month: 9, year: 2020, id: "9.9.2020" },
-           { day: 10, month: 9, year: 2020, id: "10.9.2020" },
-           { day: 11, month: 9, year: 2020, id: "11.9.2020" },
-           { day: 12, month: 9, year: 2020, id: "12.9.2020" },
-           { day: 13, month: 9, year: 2020, id: "13.9.2020" },
-           { day: 14, month: 9, year: 2020, id: "14.9.2020" },
-           { day: 15, month: 9, year: 2020, id: "15.9.2020" },
-           { day: 16, month: 9, year: 2020, id: "16.9.2020" },
-           { day: 17, month: 9, year: 2020, id: "17.9.2020" },
-           { day: 18, month: 9, year: 2020, id: "18.9.2020" },
-           { day: 19, month: 9, year: 2020, id: "19.9.2020" },
-           { day: 20, month: 9, year: 2020, id: "20.9.2020" },
-           { day: 21, month: 9, year: 2020, id: "21.9.2020" },
-           { day: 22, month: 9, year: 2020, id: "22.9.2020" },
-           { day: 23, month: 9, year: 2020, id: "23.9.2020" },
-           { day: 24, month: 9, year: 2020, id: "24.9.2020" },
-           { day: 25, month: 9, year: 2020, id: "25.9.2020" },
-           { day: 26, month: 9, year: 2020, id: "26.9.2020" },
-           { day: 27, month: 9, year: 2020, id: "27.9.2020" },
-           { day: 28, month: 9, year: 2020, id: "28.9.2020" },
-           { day: 29, month: 9, year: 2020, id: "29.9.2020" },
-           { day: 30, month: 9, year: 2020, id: "30.9.2020" },
-           { day: 31, month: 9, year: 2020, id: "31.9.2020" },
-           { day: 1, month: 10, year: 2020, id: "1.10.2020" }],
+    days: getDays(initMonth, initYear),
+    day: initDay,
+    month: initMonth,
+    year: initYear,
     events: new Map(),
 
     flagDay: false,
@@ -61,119 +33,185 @@ class Calendar extends React.Component {
     id: '',
     eventIndex: null,
 
-    time: '',
     title: '',
     members: '',
+    time: '',
     text: '',
 
-    timeEdit: '',
     titleEdit: '',
     membersEdit: '',
+    timeEdit: '',
     textEdit: ''
   };
 
   on = {
+    mock: {
+      add: (id, newEvent) => {
+        let { events } = this.state;
+        let dayEvents = events.get(id);
+
+        if (dayEvents) {
+          dayEvents.push(newEvent);
+          events.set(id, dayEvents);
+        } else {
+          events.set(id, [newEvent])
+        }
+
+        this.setState({ events, title: '', members: '', time: '', text: '' });
+      },
+      get: (id) => {
+        const events = this.state.events.get(id);
+        console.log(events);
+        console.log(this.state);
+        console.log(this.state.events);
+
+        return events;
+      }
+    },
+    header: {
+      month: {
+        prev: () => {
+          let month = this.state.month;
+          let year = this.state.year;
+
+          (month === MIN_MONTH) ? 
+            this.setState({ month: MAX_MONTH, days: getDays(MAX_MONTH, year - 1), year: year - 1 }) :
+            this.setState({ month: month - 1, days: getDays(month - 1, year) })
+        },
+        select: (sel) => {
+          let month = moment(sel.target.value, 'MMMM').month();
+          let year = this.state.year;
+
+          this.setState({ month: month, days: getDays(month, year) })
+        },
+        next: () => {
+          let month = this.state.month;
+          let year = this.state.year;
+
+          (month === MAX_MONTH) ?
+            this.setState({ month: MIN_MONTH, days: getDays(MIN_MONTH, year + 1), year: year + 1 }) :
+            this.setState({ month: month + 1, days: getDays(month + 1, year) })
+        },
+      },
+      year: {
+        prev: () => {
+          let month = this.state.month;
+          let year = this.state.year;
+
+          this.setState({ year: year - 1, days: getDays(month, year - 1) })
+        },
+        select: (sel) => {
+          let month = this.state.month;
+          let year = Number(sel.target.value);
+
+          this.setState({ year: year, days: getDays(month, year)})
+        },
+        next: () => {
+          let month = this.state.month;
+          let year = this.state.year;
+
+          this.setState({ year: year + 1, days: getDays(month, year + 1) })
+        },
+      }
+    },
     day: {
       show: (id) => this.setState({ flagDay: true, id: id }),
-      hide: () => this.setState({ flagDay: false })
+      hide:   () => this.setState({ flagDay: false })
     },
     event: {
-      show: (id, eventIndex) => this.setState({ flagEvent: true, flagEdit: false, id: id, eventIndex: eventIndex }),
-      hide:               () => this.setState({ flagEvent: false, flagEdit: false }),
-      add:    (id, newEvent) => {
-        let events = this.state.events.get(id);
-    
-        if (events) {
-          events.push(newEvent);
-          this.setState(this.state.events.set(id, events));
-        } else {
-          this.setState(this.state.events.set(id, [newEvent]));
-        }
-      },
+      show: (id, eventIndex) => this.setState({ flagEvent: true,  flagEdit: false, id: id, eventIndex: eventIndex }),
+      hide:               () => this.setState({ flagEvent: false, flagEdit: false }), 
       remove: (id, eventIndex) => {
         let events = this.state.events.get(id);
            
         events.splice(eventIndex, 1);
         this.setState(this.state.events.set(id, events));
-      },
-      get:    (id) => {
-        const events = this.state.events.get(id);
-        console.log(events);
-        console.log(this.state);
-        console.log(this.state.events);
-    
-        return events;
-      }
+      }   
     },
     edit: {
       show: () => this.setState({ flagEdit: true }),
       hide: () => this.setState({ flagEdit: false }),
-      //save: (id, eventIndex, newEvent) => this.setState(this.state.events.get(id).splice(eventIndex, 1, newEvent)),
     },
     form: {
-      add: {
-        title: (form) => this.setState({ title: form.target.value }),
-        members: (form) => this.setState({ members: form.target.value }),
-        time: (form) => this.setState({ time: form.target.value }),
-        text: (form) => this.setState({ text: form.target.value }),
-        submit: (form) => {
-          let event = {
-            time: this.state.time,
-            title: this.state.title,
-            members: this.state.members,
-            text: this.state.text
-          };
-
-          console.log(form);
-
-          if (this.state.title.length !== 0) {
-            this.on.event.add(this.state.id, event);
-          }
-
-          form.preventDefault();
-          form.target.reset();
-        }
+      input: (input) => {
+        console.log(input.target.name);
+        this.setState({ [input.target.name]: input.target.value })
       },
-      edit: {
-        title: (form) => this.setState({ titleEdit: form.target.value }),
-        members: (form) => this.setState({ membersEdit: form.target.value }),
-        time: (form) => this.setState({ timeEdit: form.target.value }),
-        text: (form) => this.setState({ textEdit: form.target.value }),
-        submit: (form) => {
-          let newEvent = {
-            time: this.state.timeEdit,
-            title: this.state.titleEdit,
-            members: this.state.membersEdit,
-            text: this.state.textEdit
-          };
+      submit: {
+        add: (form) => {
+          let { events, id, title, members, time, text } = this.state;
+          let dayEvents = events.get(id);
+          const newEvent = { title, members, time, text };
 
-          console.log(form);
-
-          if (this.state.titleEdit.length !== 0) {
-            //this.on.edit.save(this.state.id, this.state.eventIndex, newEvent);
-            this.setState(this.state.events.get(this.state.id).splice(this.state.eventIndex, 1, newEvent))
+          if (dayEvents) {
+            dayEvents.push(newEvent);
+            events.set(id, dayEvents);
+          } else {
+            events.set(id, [newEvent])
           }
 
           form.preventDefault();
           form.target.reset();
-          this.setState({ flagEdit: false })
+          this.setState({ events, title: '', members: '', time: '', text: '' });
+        },
+        edit: (form) => {
+          let { events, id, titleEdit, membersEdit, timeEdit, textEdit, eventIndex } = this.state;
+          let event = events.get(id)[eventIndex];
+          let isNew = (a, b) => (a === '') ? b : a;
+          let newEvent = {
+            title: isNew(titleEdit, event.title),
+            members: isNew(membersEdit, event.members),
+            time: isNew(timeEdit, event.time),
+            text: isNew(textEdit, event.text)
+          };
+
+          events.get(id).splice(eventIndex, 1, newEvent);
+
+          form.preventDefault();
+          form.target.reset();
+          this.setState({ events, titleEdit: '', membersEdit: '', timeEdit: '', textEdit: '', flagEdit: false });
         }
       }
     }
   };
 
+  
   render() {
-    const { days, events, flagDay, flagEvent, flagEdit, eventIndex, id } = this.state;
+    const { days, day, month, year, events, flagDay, flagEvent, flagEdit, eventIndex, id } = this.state;
     const on = this.on;
+    moment.locale('ru');
+
+    const hasEvents = id => (
+      Array.isArray(events.get(id)) ?
+        events.get(id).some(even => even) :
+        false
+    );
+    const markDay = week => ({
+      unmonth: (week.month - 1 !== month),
+      today: (week.day === initDay && week.month - 1 === initMonth && week.year === initYear),
+      hasEvents: hasEvents(week.id)
+    });
 
     return (
-      <Context.Provider value={{ on, days, events, id, flagEvent, eventIndex, flagEdit }}>
+      <Context.Provider value={{ on, day, days, month, year, events, id, flagEvent, eventIndex, flagEdit, hasEvents }}>
         <div className="calendar">
           <CalendarHeader />
-          <div className="calendar__grid">
-            {days.map(data => <CalendarDay data={data} key={data.id}/>)}
-          </div> 
+          <table className="calendar__body">
+            <thead>
+              <tr>{DAY_NAMES.map(name => <th key={name}>{name}</th>)}</tr>
+            </thead>
+            <tbody>
+              {days.map((arr, i) => 
+                <tr key={i}>
+                  {arr.map(week => 
+                    <CalendarDay markDay={markDay(week)} week={week} key={week.id} />
+                  )}
+                </tr>
+              )}
+            </tbody>
+          </table> 
           { flagDay && <ModalDay /> }
+          <CalendarFooter />
         </div>
       </Context.Provider>
     );
