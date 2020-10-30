@@ -18,30 +18,35 @@ const initDay = moment().date();
 const initMonth = moment().month();
 const initYear = moment().year();
 
+moment.locale('ru');
+
 class Calendar extends React.Component {
-  state = {
-    days: getDays(initMonth, initYear),
-    day: initDay,
-    month: initMonth,
-    year: initYear,
-    events: new Map(),
+  constructor(props) {
+    super(props)
+    this.state = {
+      days: getDays(initMonth, initYear),
+      day: initDay,
+      month: initMonth,
+      year: initYear,
+      events: new Map(),
 
-    flagDay: false,
-    flagEvent: false,
-    flagEdit: false,
+      flagDay: false,
+      flagEvent: false,
+      flagEdit: false,
 
-    id: '',
-    eventIndex: null,
+      id: '',
+      eventIndex: null,
 
-    title: '',
-    members: '',
-    time: '',
-    text: '',
+      title: '',
+      members: '',
+      time: '',
+      text: '',
 
-    titleEdit: '',
-    membersEdit: '',
-    timeEdit: '',
-    textEdit: ''
+      titleEdit: '',
+      membersEdit: '',
+      timeEdit: '',
+      textEdit: ''
+    };
   };
 
   on = {
@@ -119,13 +124,22 @@ class Calendar extends React.Component {
       hide:   () => this.setState({ flagDay: false })
     },
     event: {
-      show: (id, eventIndex) => this.setState({ flagEvent: true,  flagEdit: false, id: id, eventIndex: eventIndex }),
+      show: (id, eventIndex) => this.setState({ flagEvent: true,  flagEdit: false, id, eventIndex }),
       hide:               () => this.setState({ flagEvent: false, flagEdit: false }), 
       remove: (id, eventIndex) => {
-        let events = this.state.events.get(id);
+        let events = this.state.events;
+        //const hasEvents = this.methods.hasEvents;
+        let arrEvents = events.get(id);
+        //let obj = JSON.stringify(Object.fromEntries(events.entries()));
+
+        //console.log(obj);
            
-        events.splice(eventIndex, 1);
-        this.setState(this.state.events.set(id, events));
+        arrEvents.splice(eventIndex, 1);
+        events.set(id, arrEvents);
+        //if (hasEvents(id)) events.delete(id);
+
+        this.setState({ events });
+        localStorage.setItem('calendar', JSON.stringify(Object.fromEntries(events.entries())));
       }   
     },
     edit: {
@@ -153,6 +167,7 @@ class Calendar extends React.Component {
           form.preventDefault();
           form.target.reset();
           this.setState({ events, title: '', members: '', time: '', text: '' });
+          localStorage.setItem('calendar', JSON.stringify(Object.fromEntries(events.entries())));
         },
         edit: (form) => {
           let { events, id, titleEdit, membersEdit, timeEdit, textEdit, eventIndex } = this.state;
@@ -170,27 +185,45 @@ class Calendar extends React.Component {
           form.preventDefault();
           form.target.reset();
           this.setState({ events, titleEdit: '', membersEdit: '', timeEdit: '', textEdit: '', flagEdit: false });
+          localStorage.setItem('calendar', JSON.stringify(Object.fromEntries(events.entries())));
         }
       }
     }
   };
 
-  
-  render() {
-    const { days, day, month, year, events, flagDay, flagEvent, flagEdit, eventIndex, id } = this.state;
-    const on = this.on;
-    moment.locale('ru');
-
-    const hasEvents = id => (
-      Array.isArray(events.get(id)) ?
-        events.get(id).some(even => even) :
-        false
-    );
-    const markDay = week => ({
-      unmonth: (week.month - 1 !== month),
+  methods = {
+    hasEvents: id => {
+      console.log('Calendar hasEvents'); 
+      return (
+        Array.isArray(this.state.events.get(id)) ?
+          this.state.events.get(id).some(even => even) :
+          false
+      )
+    },
+    markDay: week => ({
+      unmonth: (week.month - 1 !== this.state.month),
       today: (week.day === initDay && week.month - 1 === initMonth && week.year === initYear),
-      hasEvents: hasEvents(week.id)
-    });
+      hasEvents: this.methods.hasEvents(week.id)
+    })
+  };
+
+  componentDidMount() {
+    const events = localStorage.getItem('calendar') ? 
+      new Map(Object.entries(JSON.parse(localStorage.getItem('calendar')))) :
+      new Map();
+    this.setState({ events });
+  }
+  
+  /* shouldComponentUpdate(nextProps, nextState) {
+    return this.state.events !== nextState.events
+  } */
+ 
+  render() {
+    console.log('Calendar render');
+    
+    const { days, day, month, year, events, flagDay, flagEvent, flagEdit, eventIndex, id } = this.state;
+    const { hasEvents, markDay } = this.methods;
+    const on = this.on;
 
     return (
       <Context.Provider value={{ on, day, days, month, year, events, id, flagEvent, eventIndex, flagEdit, hasEvents }}>

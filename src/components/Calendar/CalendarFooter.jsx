@@ -8,7 +8,7 @@ export default () => {
     <div className="calendar__footer">
       {(events.size > 0) ?
         <p className="calendar__footer-title--has-events">
-          У вас были сохраненные события. Состояние изменится после обновления страницы.
+          У вас были сохраненные события.
         </p> :
         <p className="calendar__footer-title--no-events">
           У вас нет сохраненных событий.
