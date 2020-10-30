@@ -10,7 +10,7 @@ export default () => {
       <button onClick={on.mock.get.bind(null, id, 2)}>Get</button>
       <ul className='events__list'>
         {hasEvents(id) ? ( 
-          events.get(id).map((event, index) => {
+          events[id].map((event, index) => {
             return (
               <li className='events__item' key={index + '.' + id}>
                 <div onClick={on.event.show.bind(null, id, index)}>

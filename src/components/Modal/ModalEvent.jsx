@@ -4,7 +4,7 @@ import Context from '../../context';
 
 export default () => {
   const { on, events, id, flagEdit, eventIndex } = React.useContext(Context);
-  const event = events.get(id)[eventIndex];
+  const event = events[id][eventIndex];
   const settingForm = {
     title: 'titleEdit',
     members: 'membersEdit',

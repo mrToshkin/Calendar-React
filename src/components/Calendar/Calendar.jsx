@@ -28,7 +28,7 @@ class Calendar extends React.Component {
       day: initDay,
       month: initMonth,
       year: initYear,
-      events: new Map(),
+      events: {},
 
       flagDay: false,
       flagEvent: false,
@@ -53,19 +53,18 @@ class Calendar extends React.Component {
     mock: {
       add: (id, newEvent) => {
         let { events } = this.state;
-        let dayEvents = events.get(id);
 
-        if (dayEvents) {
-          dayEvents.push(newEvent);
-          events.set(id, dayEvents);
+        if (events[id]) {
+          events[id].push(newEvent);
         } else {
-          events.set(id, [newEvent])
+          events[id] = [newEvent];
         }
 
         this.setState({ events, title: '', members: '', time: '', text: '' });
+        localStorage.setItem('calendar', JSON.stringify(events));
       },
       get: (id) => {
-        const events = this.state.events.get(id);
+        const events = this.state.events[id];
         console.log(events);
         console.log(this.state);
         console.log(this.state.events);
@@ -127,19 +126,16 @@ class Calendar extends React.Component {
       show: (id, eventIndex) => this.setState({ flagEvent: true,  flagEdit: false, id, eventIndex }),
       hide:               () => this.setState({ flagEvent: false, flagEdit: false }), 
       remove: (id, eventIndex) => {
-        let events = this.state.events;
-        //const hasEvents = this.methods.hasEvents;
-        let arrEvents = events.get(id);
-        //let obj = JSON.stringify(Object.fromEntries(events.entries()));
-
-        //console.log(obj);
+        let { events } = this.state;
+        const { hasEvents } = this.methods;
+        let arrEvents = events[id];
            
         arrEvents.splice(eventIndex, 1);
-        events.set(id, arrEvents);
-        //if (hasEvents(id)) events.delete(id);
-
+        events[id] = arrEvents;
+        if (!hasEvents(id)) delete events[id]
+        
         this.setState({ events });
-        localStorage.setItem('calendar', JSON.stringify(Object.fromEntries(events.entries())));
+        localStorage.setItem('calendar', JSON.stringify(events));
       }   
     },
     edit: {
@@ -154,24 +150,22 @@ class Calendar extends React.Component {
       submit: {
         add: (form) => {
           let { events, id, title, members, time, text } = this.state;
-          let dayEvents = events.get(id);
           const newEvent = { title, members, time, text };
 
-          if (dayEvents) {
-            dayEvents.push(newEvent);
-            events.set(id, dayEvents);
+          if (events[id]) {
+            events[id].push(newEvent);
           } else {
-            events.set(id, [newEvent])
+            events[id] = [newEvent]
           }
 
           form.preventDefault();
           form.target.reset();
           this.setState({ events, title: '', members: '', time: '', text: '' });
-          localStorage.setItem('calendar', JSON.stringify(Object.fromEntries(events.entries())));
+          localStorage.setItem('calendar', JSON.stringify(events));
         },
         edit: (form) => {
           let { events, id, titleEdit, membersEdit, timeEdit, textEdit, eventIndex } = this.state;
-          let event = events.get(id)[eventIndex];
+          let event = events[id][eventIndex];
           let isNew = (a, b) => (a === '') ? b : a;
           let newEvent = {
             title: isNew(titleEdit, event.title),
@@ -180,12 +174,12 @@ class Calendar extends React.Component {
             text: isNew(textEdit, event.text)
           };
 
-          events.get(id).splice(eventIndex, 1, newEvent);
+          events[id].splice(eventIndex, 1, newEvent);
 
           form.preventDefault();
           form.target.reset();
           this.setState({ events, titleEdit: '', membersEdit: '', timeEdit: '', textEdit: '', flagEdit: false });
-          localStorage.setItem('calendar', JSON.stringify(Object.fromEntries(events.entries())));
+          localStorage.setItem('calendar', JSON.stringify(events));
         }
       }
     }
@@ -195,8 +189,8 @@ class Calendar extends React.Component {
     hasEvents: id => {
       console.log('Calendar hasEvents'); 
       return (
-        Array.isArray(this.state.events.get(id)) ?
-          this.state.events.get(id).some(even => even) :
+        Array.isArray(this.state.events[id]) ?
+          this.state.events[id].some(even => even) :
           false
       )
     },
@@ -209,8 +203,8 @@ class Calendar extends React.Component {
 
   componentDidMount() {
     const events = localStorage.getItem('calendar') ? 
-      new Map(Object.entries(JSON.parse(localStorage.getItem('calendar')))) :
-      new Map();
+      JSON.parse(localStorage.getItem('calendar')) :
+      {};
     this.setState({ events });
   }
   
