@@ -129,7 +129,19 @@ class Calendar extends React.Component {
 
         this.setState({ events });
         localStorage.setItem('calendar', JSON.stringify(events));
-      }   
+      },
+      drag: {
+        start: (e, eventIndex) => this.setState({ eventIndex }),
+        drop: (e, dropIndex) => {
+          let { id, events, eventIndex} = this.state;
+
+          [events[id][eventIndex], events[id][dropIndex]] = [events[id][dropIndex], events[id][eventIndex]]
+
+          e.preventDefault();
+          this.setState({ events })
+          localStorage.setItem('calendar', JSON.stringify(events));
+        }
+      }
     },
     edit: {
       show: () => this.setState({ flagEdit: true, titleEdit: '', membersEdit: '', timeEdit: '', textEdit: '' }),
@@ -194,10 +206,6 @@ class Calendar extends React.Component {
       {};
     this.setState({ events });
   }
-  
-  /* shouldComponentUpdate(nextProps, nextState) {
-    return this.state.events !== nextState.events
-  } */
  
   render() {    
     const { days, day, month, year, events, flagDay, flagEvent, flagEdit, eventIndex, id } = this.state;

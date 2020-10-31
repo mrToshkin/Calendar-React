@@ -12,7 +12,21 @@ export default () => {
         {hasEvents(id) ? ( 
           events[id].map((event, index) => {
             return (
-              <li className='events__li' key={index + '.' + id}>
+              <li
+                onDragStart={(e) => on.event.drag.start(e, index)}
+                onDrop={(e) => {
+                  on.event.drag.drop(e, index)
+                  e.currentTarget.classList.remove('events__li--dng')
+                }}
+                onDragOver={(e) => {
+                  e.currentTarget.classList.add('events__li--dng')
+                  e.preventDefault()
+                }}
+                onDragLeave={(e) => e.currentTarget.classList.remove('events__li--dng')}
+                draggable={true} 
+                className='events__li'
+                key={index + '.' + id}
+              >
                 <button className='events__item button-reset' onClick={on.event.show.bind(null, id, index)}>
                   <span className='events__item-time'>{event.time !== '' ? event.time : '-- : --'}</span>
                   <span className="events__item-title">{event.title}</span>

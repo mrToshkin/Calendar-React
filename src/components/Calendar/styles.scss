@@ -24,6 +24,10 @@ button { cursor: pointer; }
   }
 }
 
+.js-focus-visible :focus:not(.focus-visible) {
+  outline: none;
+}
+
 @import "./Calendar.scss";
 @import "../Modal/Modal.scss";
 @import "../Events/Events.scss";

@@ -15,15 +15,25 @@
     border: 1px solid $middle-grey;
     border-radius: 4px;
 
-    background-color: #fff;
+    background-color: $events-item-color;
     transition: 0.3s;
 
     &:hover, &:focus {
-      background-color: $light-grey;
+      background-color: $events-color;
       transition: 0.3s;
 
       .events__item-btn-remove {
-        background-color: $light-grey;
+        background-color: $events-color;
+        transition: 0.3s;
+      }
+    }
+
+    &--dng {
+      background-color: $events-color;
+      transition: 0.3s;
+
+      .events__item-btn-remove {
+        background-color: $events-color;
         transition: 0.3s;
       }
     }
@@ -53,7 +63,7 @@
       height: 30px;
       margin: 5px;
 
-      background-color: white;
+      background-color: $events-item-color;
       transition: 0.3s;
 
       &::before {
@@ -72,7 +82,7 @@
       }
 
       &:hover, &:focus {
-        background-color: $light-grey;
+        background-color: $events-color;
 
         &::before {
           opacity: 1;

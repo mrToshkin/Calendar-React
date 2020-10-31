@@ -2,7 +2,6 @@ import moment from 'moment';
 
 export function getDays(month, year) {
   const startDay = moment([year, month]).startOf('month').startOf('week');
-  //const endDay = moment().endOf('month').endOf('week');
   let day = startDay.clone();
   let flag = true;
 
