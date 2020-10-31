@@ -54,16 +54,12 @@ class Calendar extends React.Component {
       add: (id, newEvent) => {
         let { events } = this.state;
 
-        if (events[id]) {
-          events[id].push(newEvent);
-        } else {
-          events[id] = [newEvent];
-        }
+        events[id] ? events[id].push(newEvent) : events[id] = [newEvent];
 
         this.setState({ events, title: '', members: '', time: '', text: '' });
         localStorage.setItem('calendar', JSON.stringify(events));
       },
-      get: (id) => {
+      get: id => {
         const events = this.state.events[id];
         console.log(events);
         console.log(this.state);
@@ -75,22 +71,20 @@ class Calendar extends React.Component {
     header: {
       month: {
         prev: () => {
-          let month = this.state.month;
-          let year = this.state.year;
+          let { month, year } = this.state;
 
           (month === MIN_MONTH) ? 
             this.setState({ month: MAX_MONTH, days: getDays(MAX_MONTH, year - 1), year: year - 1 }) :
             this.setState({ month: month - 1, days: getDays(month - 1, year) })
         },
-        select: (sel) => {
-          let month = moment(sel.target.value, 'MMMM').month();
-          let year = this.state.year;
+        select: select => {
+          let month = moment(select.target.value, 'MMMM').month();
+          let { year } = this.state;
 
-          this.setState({ month: month, days: getDays(month, year) })
+          this.setState({ month, days: getDays(month, year) })
         },
         next: () => {
-          let month = this.state.month;
-          let year = this.state.year;
+          let { month, year } = this.state;
 
           (month === MAX_MONTH) ?
             this.setState({ month: MIN_MONTH, days: getDays(MIN_MONTH, year + 1), year: year + 1 }) :
@@ -99,28 +93,26 @@ class Calendar extends React.Component {
       },
       year: {
         prev: () => {
-          let month = this.state.month;
-          let year = this.state.year;
+          let { month, year } = this.state;
 
           this.setState({ year: year - 1, days: getDays(month, year - 1) })
         },
-        select: (sel) => {
-          let month = this.state.month;
-          let year = Number(sel.target.value);
+        select: select => {
+          let { month } = this.state;
+          let year = Number(select.target.value);
 
-          this.setState({ year: year, days: getDays(month, year)})
+          this.setState({ year, days: getDays(month, year)})
         },
         next: () => {
-          let month = this.state.month;
-          let year = this.state.year;
+          let { month, year } = this.state;
 
           this.setState({ year: year + 1, days: getDays(month, year + 1) })
         },
       }
     },
     day: {
-      show: (id) => this.setState({ flagDay: true, id: id }),
-      hide:   () => this.setState({ flagDay: false })
+      show: id => this.setState({ flagDay: true, id }),
+      hide: () => this.setState({ flagDay: false })
     },
     event: {
       show: (id, eventIndex) => this.setState({ flagEvent: true,  flagEdit: false, id, eventIndex }),
@@ -128,42 +120,37 @@ class Calendar extends React.Component {
       remove: (id, eventIndex) => {
         let { events } = this.state;
         const { hasEvents } = this.methods;
-        let arrEvents = events[id];
            
-        arrEvents.splice(eventIndex, 1);
-        events[id] = arrEvents;
-        if (!hasEvents(id)) delete events[id]
-        
+        events[id].splice(eventIndex, 1);
+        if (!hasEvents(id)) {
+          delete events[id]
+          this.setState({ flagEvent: false, flagEdit: false, });
+        }
+
         this.setState({ events });
         localStorage.setItem('calendar', JSON.stringify(events));
       }   
     },
     edit: {
-      show: () => this.setState({ flagEdit: true }),
+      show: () => this.setState({ flagEdit: true, titleEdit: '', membersEdit: '', timeEdit: '', textEdit: '' }),
       hide: () => this.setState({ flagEdit: false }),
     },
     form: {
-      input: (input) => {
-        console.log(input.target.name);
-        this.setState({ [input.target.name]: input.target.value })
-      },
+      input: input => this.setState({ [input.target.name]: input.target.value }),
       submit: {
-        add: (form) => {
+        add: form => {
           let { events, id, title, members, time, text } = this.state;
           const newEvent = { title, members, time, text };
 
-          if (events[id]) {
-            events[id].push(newEvent);
-          } else {
-            events[id] = [newEvent]
-          }
+          events[id] ? events[id].push(newEvent) : events[id] = [newEvent];
 
           form.preventDefault();
           form.target.reset();
+
           this.setState({ events, title: '', members: '', time: '', text: '' });
           localStorage.setItem('calendar', JSON.stringify(events));
         },
-        edit: (form) => {
+        edit: form => {
           let { events, id, titleEdit, membersEdit, timeEdit, textEdit, eventIndex } = this.state;
           let event = events[id][eventIndex];
           let isNew = (a, b) => (a === '') ? b : a;
@@ -178,6 +165,7 @@ class Calendar extends React.Component {
 
           form.preventDefault();
           form.target.reset();
+
           this.setState({ events, titleEdit: '', membersEdit: '', timeEdit: '', textEdit: '', flagEdit: false });
           localStorage.setItem('calendar', JSON.stringify(events));
         }
@@ -187,7 +175,6 @@ class Calendar extends React.Component {
 
   methods = {
     hasEvents: id => {
-      console.log('Calendar hasEvents'); 
       return (
         Array.isArray(this.state.events[id]) ?
           this.state.events[id].some(even => even) :
@@ -212,9 +199,7 @@ class Calendar extends React.Component {
     return this.state.events !== nextState.events
   } */
  
-  render() {
-    console.log('Calendar render');
-    
+  render() {    
     const { days, day, month, year, events, flagDay, flagEvent, flagEdit, eventIndex, id } = this.state;
     const { hasEvents, markDay } = this.methods;
     const on = this.on;

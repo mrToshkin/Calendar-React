@@ -15,7 +15,7 @@ export function getDays(month, year) {
 
   return (
     [...Array(5)].map(() => {
-      return [...Array(7)].map(() =>{
+      return [...Array(7)].map(() => {
         if (flag) {
           flag = false;
           return new Data(day);

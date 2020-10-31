@@ -4,11 +4,37 @@
 
   width: 100%;
 
-  &__input-text {
-    width: 100%;
+  label { margin-top: 5px; }
+
+  input,
+  &__textarea {
+    margin-top: 5px;
+    padding: 3px 7px;
+
+    border: 1px solid $middle-grey;
+    border-radius: 4px;
+  }
+
+  &__time {
+    margin-left: 10px;
+    padding: 0 5px;
   }
 
   &__textarea {
-    width: 100%;
+    min-height: 80px;
+  }
+
+  &__submit {
+    margin-top: 10px;
+    padding: 5px;
+
+    border-radius: 4px;
+    background-color: $light-grey;
+    transition: 0.3s;
+
+    &:hover, &:focus {
+      background-color: $middle-grey;
+      transition: 0.3s;
+    }
   }
 }

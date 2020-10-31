@@ -54,7 +54,7 @@
   &__line {
     width: 100%;
     height: 1px;
-    margin: 10px 0;
+    margin: 15px 0;
 
     background-color: $light-grey;
   }
@@ -84,7 +84,7 @@
       background-repeat: no-repeat;
     }
 
-    &:hover {
+    &:hover, &:focus {
       background-color: $light-grey;
 
       &::before {
@@ -121,7 +121,7 @@
       background-repeat: no-repeat;
     }
 
-    &:hover {
+    &:hover, &:focus {
       background-color: $light-grey;
 
       &::before {

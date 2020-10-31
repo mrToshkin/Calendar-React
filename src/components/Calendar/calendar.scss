@@ -41,7 +41,7 @@
       }
       &-left::before { transform: rotate(180deg); }
 
-      &:hover {
+      &:hover, &:focus {
         background-color: $light-grey;
 
         &::before {
@@ -88,7 +88,7 @@
     background-color: #fff;
     transition: 0.3s;
 
-    &:hover {
+    &:hover, &:focus {
       background-color: $light-grey;
       transition: 0.3s;
     }
@@ -97,7 +97,7 @@
       color: $middle-grey;
       transition: 0.3s;
 
-      &:hover {
+      &:hover, &:focus {
         color: black;
         transition: 0.3s;
       }
@@ -107,7 +107,7 @@
     &--events { 
       background-color: $events-color;
       
-      &:hover { background-color: $events-color-hover; }
+      &:hover, &:focus { background-color: $events-color-hover; }
     }
   }
 

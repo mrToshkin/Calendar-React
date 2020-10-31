@@ -8,10 +8,10 @@ export default () => {
     <div className="calendar__footer">
       {(Object.keys(events).length > 0) ?
         <p className="calendar__footer-title--has-events">
-          У вас есть сохраненные события.
+          У вас есть события.
         </p> :
         <p className="calendar__footer-title--no-events">
-          У вас нет сохраненных событий.
+          У вас нет событий.
         </p>
       }
     </div>
